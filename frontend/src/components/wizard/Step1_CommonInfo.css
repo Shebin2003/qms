@@ -1,0 +1,111 @@
+/* src/components/wizard/Step1_CommonInfo.css */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
+/* --- Layout --- */
+.wizard-step-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 50px 20px;
+    min-height: 80vh;
+    background-color: #f9fafb; /* Light grey background */
+    font-family: 'Inter', sans-serif;
+}
+
+.form-card {
+    background: white;
+    padding: 32px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e5e7eb;
+    width: 100%;
+    max-width: 500px;
+}
+
+.form-card h2 {
+    font-size: 22px;
+    font-weight: 600;
+    color: #111827;
+    margin-top: 0;
+    margin-bottom: 24px;
+}
+
+/* --- Form Elements --- */
+.form-card label {
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+    color: #374151;
+    margin-bottom: 24px; /* Provides spacing */
+}
+
+.form-card input[type="text"],
+.form-card select,
+.form-card textarea { /* ADDED: Textarea styles for consistency */
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 14px;
+    margin-top: 8px;
+    box-sizing: border-box;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    font-family: 'Inter', sans-serif;
+}
+
+.form-card input[type="text"]:focus,
+.form-card select:focus,
+.form-card textarea:focus {
+    outline: none;
+    border-color: #4f46e5;
+    box-shadow: 0 0 0 2px #c7d2fe;
+}
+
+.form-card textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+/* --- Buttons --- */
+.primary-button2 { /* UPDATED: Renamed from primary-button2 */
+    flex-grow: 1; /* Allows flexible width in a button group */
+    background-color: #4f46e5;
+    color: white;
+    border: none;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.primary-button2:hover {
+    background-color: #4338ca;
+}
+
+/* NEW: Styles for secondary buttons like "Back" */
+.secondary-button2 {
+    flex-grow: 1;
+    background-color: #ffffff;
+    color: #374151;
+    border: 1px solid #d1d5db;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.secondary-button2:hover {
+    background-color: #f9fafb;
+    border-color: #a1a1aa;
+}
+
+/* NEW: A container to align buttons side-by-side */
+.button-group {
+    display: flex;
+    gap: 12px;
+    margin-top: 24px;
+}

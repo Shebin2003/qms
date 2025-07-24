@@ -1,0 +1,33 @@
+/* src/components/event/EventTable.css */
+
+.table-container {
+    overflow-x: auto; /* Makes table responsive on small screens */
+}
+
+.qms-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.qms-table th,
+.qms-table td {
+    padding: 16px;
+    text-align: left;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.qms-table th {
+    font-size: 12px;
+    font-weight: 600;
+    color: #6b7280;
+    text-transform: uppercase;
+}
+
+.clickable-row {
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.clickable-row:hover {
+    background-color: #f9fafb;
+}

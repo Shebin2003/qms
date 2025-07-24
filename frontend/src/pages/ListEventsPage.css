@@ -1,0 +1,120 @@
+/* src/pages/ListEventsPage.css */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
+.list-events-page-container {
+    max-width: 1400px;
+    margin: 20px auto;
+    padding: 24px;
+    font-family: 'Inter', sans-serif;
+    background-color: #f9fafb; /* Light grey background */
+}
+
+/* --- Header Styles --- */
+.header-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.header-title {
+    font-size: 28px;
+    font-weight: 600;
+    color: #111827;
+}
+
+.primary-button {
+    background-color: #4f46e5;
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.primary-button:hover {
+    background-color: #4338ca;
+}
+
+/* --- Table Styles --- */
+.table-container {
+    background-color: white;
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.07), 0 2px 4px -2px rgba(0, 0, 0, 0.07);
+}
+
+.qms-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.qms-table th,
+.qms-table td {
+    padding: 16px;
+    text-align: left;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.qms-table th {
+    font-size: 12px;
+    font-weight: 600;
+    color: #6b7280;
+    text-transform: uppercase;
+}
+
+.qms-table td {
+    font-size: 14px;
+    color: #374151;
+}
+
+.clickable-row {
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.clickable-row:hover {
+    background-color: #f9fafb;
+}
+
+/* --- Status Badge Styles --- */
+.status-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-weight: 500;
+    font-size: 12px;
+}
+
+.status-requested {
+    background-color: #dbeafe;
+    color: #1e40af;
+}
+
+/* Add other statuses here if needed */
+.status-inprogress {
+    background-color: #fef3c7;
+    color: #92400e;
+}
+
+/* Add these styles to ListEventsPage.css */
+
+.secondary-button {
+    background-color: #ffffff;
+    color: #374151; /* Dark grey text */
+    border: 1px solid #d1d5db; /* Light grey border */
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.secondary-button:hover {
+    background-color: #f9fafb; /* Slightly grey on hover */
+    border-color: #a1a1aa;
+}
