@@ -1,8 +1,5 @@
-// src/components/event/EventTable.jsx
 import React from 'react';
 import dateFormat from '../common/dateFormat';
-
-// Using a separate CSS file for styling is recommended
 import './eventTable.css'; 
 
 const EventTable = ({ events, onRowClick }) => {
@@ -24,7 +21,6 @@ const EventTable = ({ events, onRowClick }) => {
                 </thead>
                 <tbody>
                     {events.map((event) => (
-                        // The entire row is clickable
                         <tr key={event.event_id} onClick={() => onRowClick(event.event_id,event.event_type)} className="clickable-row">
                             <td>{event.event_id}</td>
                             <td>{event.title}</td>

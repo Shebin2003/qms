@@ -1,6 +1,5 @@
-// src/components/wizard/Step2_CommonDetails.jsx
 import React, { useState } from 'react';
-import './Step1_CommonInfo.css'; // Reusing styles for a consistent look
+import './Step1_CommonInfo.css'; 
 
 const Step2_CommonDetails = ({ onNext, onBack, initialData }) => {
     const [formData, setFormData] = useState({
@@ -8,7 +7,7 @@ const Step2_CommonDetails = ({ onNext, onBack, initialData }) => {
         severity: initialData.severity || 'MINOR',
         department: initialData.department || '',
         site: initialData.site || '',
-        created_by: initialData.created_by || '', // NEW FIELD
+        created_by: initialData.created_by || '', 
     });
 
     const handleInputChange = (e) => {
@@ -17,8 +16,6 @@ const Step2_CommonDetails = ({ onNext, onBack, initialData }) => {
     };
     
     const handleNextClick = () => {
-        // UPDATED VALIDATION: Only check for required fields.
-        // Description and Site are optional.
         if (!formData.severity || !formData.department || !formData.created_by) {
             alert('Please fill out all required fields: Severity, Department, and Created By.');
             return;
@@ -67,8 +64,6 @@ const Step2_CommonDetails = ({ onNext, onBack, initialData }) => {
                         placeholder="Optional: e.g., New Jersey Facility"
                     />
                 </label>
-                
-                {/* NEW FIELD */}
                 <label>Created By *
                     <input 
                         type="text" 

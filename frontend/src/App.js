@@ -1,14 +1,11 @@
-// src/App.jsx
-import React from 'react';
+
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
-// Import the page components
 import ListEventsPage from './pages/ListEventsPage';
 import NewEventPage from './pages/NewEventPage';
 import CapaDetailsPage from './pages/CapaDetailsPage';
 import DeviationDetailsPage from './pages/DeviationDetailsPage';
 
-// Import global styles
 import './index.css'; 
 
 function App() {

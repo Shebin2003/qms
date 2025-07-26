@@ -1,8 +1,5 @@
-// src/components/event/AIChatPanel.jsx
 import React, { useState } from 'react';
 
-// You can get a gear icon from a library like react-icons if you want
-// For now, we'll use a text-based icon.
 const GearIcon = () => <span>⚙️</span>;
 
 const AIChatPanel = ({ onPromptSubmit }) => {
@@ -12,11 +9,6 @@ const AIChatPanel = ({ onPromptSubmit }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!prompt) return;
-
-        // In a real app, you would await the response
-        // const aiResponse = await onPromptSubmit(prompt); 
-
-        // For demonstration, we'll simulate a response
         const userMessage = { author: 'user', text: prompt };
         const aiResponse = { author: 'ai', text: `(Simulated response for "${prompt}")` };
 

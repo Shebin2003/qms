@@ -1,9 +1,7 @@
-// src/components/wizard/Step2_CapaInfo.jsx
 import React, { useState } from 'react';
-import './Step1_CommonInfo.css'; // Reuse the styles for a consistent look
+import './Step1_CommonInfo.css';
 
 const Step2_CapaInfo = ({ onBack, onSubmit }) => {
-    // 1. Use a single state object for all form fields
     const [formData, setFormData] = useState({
         root_cause: '',
         corrective_action: '',
@@ -21,12 +19,10 @@ const Step2_CapaInfo = ({ onBack, onSubmit }) => {
     };
 
     const handleSubmitClick = () => {
-        // 2. Updated validation for all required fields
         if (!formData.root_cause || !formData.corrective_action || !formData.preventive_action || !formData.effectiveness_check) {
             alert('Please fill out all required fields marked with *');
             return;
         }
-        // 3. Wrap the formData in a 'capa' object before submitting
         onSubmit(formData);
     };
 

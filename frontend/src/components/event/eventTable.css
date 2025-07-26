@@ -1,7 +1,7 @@
-/* src/components/event/EventTable.css */
+
 
 .table-container {
-    overflow-x: auto; /* Makes table responsive on small screens */
+    overflow-x: auto; 
 }
 
 .qms-table {

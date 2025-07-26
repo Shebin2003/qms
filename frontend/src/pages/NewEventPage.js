@@ -1,9 +1,6 @@
-// src/pages/NewEventPage.jsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createEvent } from '../api/qmsApi';
-
-// Import all step components
 import Step1_CommonInfo from '../components/wizard/Step1_CommonInfo';
 import Step2_CommonDetails from '../components/wizard/Step2_CommonDetails';
 import Step2_DeviationInfo from '../components/wizard/Step2_DeviationInfo';
@@ -18,9 +15,7 @@ const NewEventPage = () => {
     });
     const navigate = useNavigate();
 
-    // NEW: useEffect to add automatic data when entering Step 3
     useEffect(() => {
-        // This code runs whenever the 'step' state changes
         if (step === 3) {
             console.log("Entering Stage 3, adding automatic data...");
             const currentDateTime = new Date().toISOString();
@@ -31,11 +26,11 @@ const NewEventPage = () => {
                     ...prev.event,
                     created_at: currentDateTime,
                     lastModified_at: currentDateTime,
-                    lastModified_by: prev.event.created_by // Copy from created_by
+                    lastModified_by: prev.event.created_by 
                 }
             }));
         }
-    }, [step]); // The dependency array ensures this runs only when 'step' changes
+    }, [step]); 
 
     const handleNext = (data) => {
         setEventData(prev => ({

@@ -1,6 +1,5 @@
-// src/components/wizard/Step2_DeviationInfo.jsx
 import React, { useState } from 'react';
-import './Step1_CommonInfo.css'; // Reuse the styles for a consistent look
+import './Step1_CommonInfo.css'; 
 
 const Step2_DeviationInfo = ({ onBack, onSubmit }) => {
     const [formData, setFormData] = useState({
@@ -23,8 +22,7 @@ const Step2_DeviationInfo = ({ onBack, onSubmit }) => {
             alert('Please fill out all required fields marked with *');
             return;
         }
-        
-        // UPDATED: Wrap the formData in a 'deviation' object before submitting
+
         onSubmit(formData);
     };
 

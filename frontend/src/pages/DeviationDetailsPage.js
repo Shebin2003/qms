@@ -2,13 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from "react-router-dom";
 import { fetchEventById, updateEventByAI, updateDeviation } from '../api/qmsApi';
 import { FilePenLine, Zap, ShieldAlert, Package, BrainCircuit, Send, Save, Target, History, Info } from 'lucide-react';
-import './DeviationDetailsPage.css'; // You can reuse the same CSS as CapaDetailsPage
+import './DeviationDetailsPage.css'; 
 
-// --- Constants for Dropdown Options ---
 const statusOptions = ["REQUESTED", "UNDER_INVESTIGATION", "PENDING_APPROVAL", "CLOSED"];
 const severityOptions = ["CRITICAL", "MAJOR", "MINOR"];
 
-// --- Helper Components (Identical to CapaDetailsPage) ---
 const formatDate = (dateString) => {
     if (!dateString) return 'N/A';
     const date = new Date(dateString);
@@ -103,7 +101,6 @@ const DeviationDetailsPage = () => {
             if (!event_id || !event_type) { setLoading(false); return; }
             try {
                 const data = await fetchEventById({ event_id, event_type });
-                // MODIFIED: Merges event with deviation data
                 const combinedData = { ...data.event, ...data.deviation };
                 setEventData(combinedData);
             } catch (error) { console.error("Failed to fetch event:", error); }
@@ -128,7 +125,6 @@ const DeviationDetailsPage = () => {
         'lastModified_by', 'department', 'site'
         ];
         
-        // Define the keys that belong to the Deviation model
         const deviationKeys = [
             'deviation_id', 'root_cause', 'deviation_category', 'immediate_action',
             'batch_Number', 'product_impact_assessment', 'regulatory_impact_assessment',
@@ -139,13 +135,10 @@ const DeviationDetailsPage = () => {
             event: {},
             deviation: {}
         };
-        // Loop through all keys in the flat data object
         for (const key in eventData) {
             if (eventKeys.includes(key)) {
-                // If the key is an event key, add it to the event object
                 groupedData.event[key] = eventData[key];
             } else if (deviationKeys.includes(key)) {
-                // If the key is a deviation key, add it to the deviation object
                 groupedData.deviation[key] = eventData[key];
             }
         };
@@ -167,24 +160,22 @@ const DeviationDetailsPage = () => {
     };
     const returnHome = () => navigate('/');
     const handleAiSubmit = async (e) => {
-        e.preventDefault(); // Prevent the form from causing a page reload
-        if (!aiPrompt.trim()) return; // Don't send empty messages
+        e.preventDefault();
+        if (!aiPrompt.trim()) return;
 
         const payload = {
             message: aiPrompt,
             thread_id: threadId,
-            data: eventData // The current eventData state
+            data: eventData 
         };
         
         console.log("Sending data to AI:", payload);
         
         try {
-            // The AI backend will return the fields to update
             const temp = await updateEventByAI(payload);
             const updates = temp.payload 
             console.log("payload",payload)
-            
-            // Update the form with the data returned by the AI
+
             setEventData(prevData => ({ ...prevData, ...updates }));
             
             console.log("AI response processed, state updated.");
@@ -194,7 +185,7 @@ const DeviationDetailsPage = () => {
             alert("The AI assistant could not be reached.");
         }
 
-        setAiPrompt(''); // Clear the input field after sending
+        setAiPrompt(''); 
     };
     if (loading) return <div className="loading-container">Loading...</div>;
     if (!eventData) return <div className="loading-container">Error: Event data not found.</div>;
@@ -216,7 +207,6 @@ const DeviationDetailsPage = () => {
                     </div>
                 </header>
 
-                {/* MODIFIED: Grid layout now contains Deviation-specific cards */}
                 <div className="details-grid">
                     <div className="grid-main-column">
                         <Card title="Event Description" icon={<FilePenLine size={16} />} cardData={{ description: eventData.description }} onSave={handleSave}>

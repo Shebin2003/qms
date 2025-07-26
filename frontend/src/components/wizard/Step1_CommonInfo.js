@@ -1,6 +1,5 @@
-// src/components/wizard/Step1_CommonInfo.jsx
 import React, { useState } from 'react';
-import './Step1_CommonInfo.css'; // Import the new stylesheet
+import './Step1_CommonInfo.css'; 
 
 const Step1_CommonInfo = ({ onNext, initialData }) => {
     const [title, setTitle] = useState(initialData.title || '');

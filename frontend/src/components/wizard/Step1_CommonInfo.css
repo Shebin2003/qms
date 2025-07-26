@@ -1,4 +1,3 @@
-/* src/components/wizard/Step1_CommonInfo.css */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
 
 /* --- Layout --- */
@@ -8,7 +7,7 @@
     align-items: flex-start;
     padding: 50px 20px;
     min-height: 80vh;
-    background-color: #f9fafb; /* Light grey background */
+    background-color: #f9fafb; 
     font-family: 'Inter', sans-serif;
 }
 
@@ -30,18 +29,17 @@
     margin-bottom: 24px;
 }
 
-/* --- Form Elements --- */
 .form-card label {
     display: block;
     font-size: 14px;
     font-weight: 500;
     color: #374151;
-    margin-bottom: 24px; /* Provides spacing */
+    margin-bottom: 24px; 
 }
 
 .form-card input[type="text"],
 .form-card select,
-.form-card textarea { /* ADDED: Textarea styles for consistency */
+.form-card textarea { 
     width: 100%;
     padding: 10px 12px;
     border: 1px solid #d1d5db;
@@ -66,9 +64,9 @@
     resize: vertical;
 }
 
-/* --- Buttons --- */
-.primary-button2 { /* UPDATED: Renamed from primary-button2 */
-    flex-grow: 1; /* Allows flexible width in a button group */
+
+.primary-button2 { 
+    flex-grow: 1; 
     background-color: #4f46e5;
     color: white;
     border: none;
@@ -84,7 +82,7 @@
     background-color: #4338ca;
 }
 
-/* NEW: Styles for secondary buttons like "Back" */
+
 .secondary-button2 {
     flex-grow: 1;
     background-color: #ffffff;
@@ -103,7 +101,7 @@
     border-color: #a1a1aa;
 }
 
-/* NEW: A container to align buttons side-by-side */
+
 .button-group {
     display: flex;
     gap: 12px;

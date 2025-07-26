@@ -7,7 +7,7 @@ class CAPAService:
     def create_event(self, event_data: dict):
         event = models.Event(**event_data)
         self.db.add(event)
-        self.db.flush()  # allows event.id to be generated
+        self.db.flush()  
         return event
         
     def create_capa(self, capa_data):

@@ -9,12 +9,15 @@ class ListItems:
 
     def getAllData(self):
         events = self.db.query(Event).all()
-        # Define the custom sort order
+
         severity_order = {"CRITICAL": 0, "MAJOR": 1, "MINOR": 2}
-        # Sort the list using the severity_order dictionary as a key
+        
         sorted_events = sorted(
             events, 
-            key=lambda event: severity_order.get(event.severity, 99)
+            key=lambda event: (
+                event.status == 'CLOSED',                
+                severity_order.get(event.severity, 99)   
+            )
         )
         
         return {
@@ -24,14 +27,10 @@ class ListItems:
     def getData(self, data: dict):
         event_id = data.get("event_id")
         event_type = data.get("event_type")
-        
-        # First, get the event
         event = self.db.query(Event).filter(Event.event_id == event_id).first()
         if not event:
             print("hello")
             raise HTTPException(status_code=404, detail="Event not found")
-
-        # Then get either deviation or capa
         if event_type == "CAPA":
             capa = self.db.query(Capa).filter(Capa.event_id == event_id, Capa.event_id == event_id).first()
             if not capa:

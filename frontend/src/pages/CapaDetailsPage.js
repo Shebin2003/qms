@@ -4,11 +4,9 @@ import { fetchEventById, updateEventByAI,updateCapa } from '../api/qmsApi';
 import { FilePenLine, Zap, ShieldCheck, CheckCircle, BrainCircuit, Send, Save, Target, Package, History, Info } from 'lucide-react';
 import './CapaDetailsPage.css';
 
-// --- Constants for Dropdown Options ---
 const statusOptions = ["REQUESTED", "UNDER_INVESTIGATION", "PENDING_APPROVAL", "CLOSED"];
 const severityOptions = ["CRITICAL", "MAJOR", "MINOR"];
 
-// --- Helper Components ---
 const formatDate = (dateString) => {
     if (!dateString) return 'N/A';
     const date = new Date(dateString);
@@ -127,7 +125,6 @@ const CapaDetailsPage = () => {
         'lastModified_by', 'department', 'site'
         ];
         
-        // Define the keys that belong to the Deviation model
         const capaKeys = [
             'capa_id', 'root_cause', 'preventive_action', 'effectiveness_check',
             'closure_justification', 'verification_plan', 'verification_summary',
@@ -138,13 +135,11 @@ const CapaDetailsPage = () => {
             event: {},
             capa: {}
         };
-        // Loop through all keys in the flat data object
+
         for (const key in eventData) {
             if (eventKeys.includes(key)) {
-                // If the key is an event key, add it to the event object
                 groupedData.event[key] = eventData[key];
             } else if (capaKeys.includes(key)) {
-                // If the key is a deviation key, add it to the deviation object
                 groupedData.capa[key] = eventData[key];
             }
         };
@@ -167,24 +162,21 @@ const CapaDetailsPage = () => {
     const returnHome = () => navigate('/');
     const handleAiSubmit = async (e) => {
             setThreadId(`thread_${Date.now()}`);
-            e.preventDefault(); // Prevent the form from causing a page reload
-            if (!aiPrompt.trim()) return; // Don't send empty messages
+            e.preventDefault(); 
+            if (!aiPrompt.trim()) return; 
     
             const payload = {
                 message: aiPrompt,  
                 thread_id: threadId,
-                data: eventData // The current eventData state
+                data: eventData 
             };
             
             console.log("Sending data to AI:", payload);
             
             try {
-                // The AI backend will return the fields to update
                 const temp = await updateEventByAI(payload);
                 const updates = temp.payload 
                 console.log("payload",payload)
-                
-                // Update the form with the data returned by the AI
                 setEventData(prevData => ({ ...prevData, ...updates }));
                 
                 console.log("AI response processed, state updated.");
@@ -194,7 +186,7 @@ const CapaDetailsPage = () => {
                 alert("The AI assistant could not be reached.");
             }
     
-            setAiPrompt(''); // Clear the input field after sending
+            setAiPrompt(''); 
         };
 
     if (loading) return <div className="loading-container">Loading...</div>;
@@ -257,7 +249,6 @@ const CapaDetailsPage = () => {
                                 </div>
                             )}
                         </Card>
-                        {/* MOVED: Closure & Approvals card is now in the main column */}
                         <Card title="Closure & Approvals" icon={<ShieldCheck size={16} />} cardData={{ quality_approver: eventData.quality_approver, verification_summary: eventData.verification_summary, closure_justification: eventData.closure_justification }} onSave={handleSave}>
                              {(isEditing, data, onChange) => (
                                 <div className="card-sub-grid-single-col">

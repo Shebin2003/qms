@@ -5,7 +5,7 @@ from services.deviation_service import DeviationService
 from services.capa_service import CAPAService
 from database import get_db
 from services.list_items import ListItems
-from services.updateEvents import update_deviation_event,update_capa_event
+from services.update_events import update_deviation_event,update_capa_event
 from langchain_core.messages import HumanMessage, AIMessage, ToolMessage
 from langchain_core.runnables import RunnableConfig
 from langchain_core.prompts import ChatPromptTemplate
@@ -39,10 +39,7 @@ def add_capa(request: schemas.CapaRequest, db: Session = Depends(get_db)):
 def get_event_details(data: dict, db: Session = Depends(get_db)):
     service = ListItems(db)
     return service.getData(data)
-    #{
-    # "event_id": 13,
-    # "event_type": "deviation"
-    # }
+
 
 # For getting all events so far
 @router.get("/event/")
@@ -77,9 +74,6 @@ def chat_with_agent(
     """
     try:
         config = RunnableConfig(configurable={"thread_id": request.thread_id})
-
-        # --- FIX 1: Provide both `messages` and `current_event` to the agent ---
-        # The `current_event` comes from the `data` field of your request.
         initial_state = {
             "messages": [HumanMessage(content=request.message)],
             "current_event": request.data
@@ -87,27 +81,37 @@ def chat_with_agent(
         
         result = agent.graph.invoke(initial_state, config=config)
 
-        # --- FIX 2: Handle the new response structure ---
-        # The successful result is the final state of the graph, which contains
-        # the updated event object.
         if result and "current_event" in result:
             return {
                 "type": "updated_event",
                 "payload": result["current_event"],
                 "message": "I've updated the event form based on your request."
             }
-        
-        # Fallback for cases where the agent responds with a simple message
+
         last_message = result.get("messages", [])[-1]
+
+        if isinstance(last_message, ToolMessage) and last_message.name == "suggest_next_steps":
+            suggestion_content = last_message.content
+            return {
+                "type": "suggestion",
+                "payload": {"suggestion_text": suggestion_content},
+                "message": "Here are some suggested next steps:"
+            }
+
+        if "current_event" in result and result["current_event"] != request.data:
+            return {
+                "type": "updated_event",
+                "payload": result["current_event"],
+                "message": "I've updated the event form based on your request."
+            }
+        
         if isinstance(last_message, AIMessage):
             return {"type": "message", "message": last_message.content}
 
         return {"type": "message", "message": "I'm not sure how to handle that."}
 
     except Exception as e:
-        # For debugging, print the actual exception to your terminal
         print(f"An error occurred in /chat: {e}")
-        # Return a proper HTTP 500 error
         raise HTTPException(status_code=500, detail="An internal error occurred in the agent.")
     
 @router.post("/listAI/", tags=["Chat"])
@@ -119,8 +123,6 @@ def chat_with_agent_main(
     """
     try:
         config = RunnableConfig(configurable={"thread_id": request.thread_id})
-
-        # CORRECTED: The initial state now only needs the user's message.
         initial_state = {
             "messages": [HumanMessage(content=request.message)],
         }
@@ -129,16 +131,32 @@ def chat_with_agent_main(
 
         last_message = result.get("messages", [])[-1]
 
-        # CORRECTED: Properly check for the ToolMessage from the summary tool.
         if isinstance(last_message, ToolMessage) and last_message.name == "summary":
             summary_content = last_message.content
             return {
                 "type": "summary",
-                "payload": {"summary_text": summary_content}, # Sending content in a structured payload
+                "payload": {"summary_text": summary_content},
                 "message": "Here is the summary you requested."
             }
         
-        # Fallback for when the agent replies directly
+        elif isinstance(last_message, ToolMessage) and last_message.name == "search_events":
+            events_list = json.loads(last_message.content)
+            return {
+                "type": "event_list",
+                "payload": {"events": events_list},
+                "message": f"Found {len(events_list)} events."
+            }
+        
+        elif isinstance(last_message, ToolMessage) and last_message.name == "open_event_for_editing":
+            event_data = json.loads(last_message.content)
+            if "error" in event_data:
+                return {"type": "error", "message": event_data["error"]}
+            return {
+                "type": "edit_event",
+                "payload": event_data, # Contains {"event_id": ..., "event_type": ...}
+                "message": f"Preparing event {event_data.get('event_id')} for editing."
+            }
+        
         if isinstance(last_message, AIMessage):
             return {"type": "message", "message": last_message.content}
 

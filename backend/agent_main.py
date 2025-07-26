@@ -11,6 +11,7 @@ from langchain_groq import ChatGroq
 from datetime import datetime
 import database 
 import models
+from typing import TypedDict, Annotated, List, Dict, Any, Optional
 
 # --- LLM Initialization ---
 llm = ChatGroq(
@@ -19,11 +20,20 @@ llm = ChatGroq(
     api_key=os.getenv("GROQ_API_KEY")
 )
 
+# --- Helper Function ---
+def model_to_dict(obj):
+    """Converts a SQLAlchemy model instance to a dictionary, handling datetimes."""
+    if not obj: return {}
+    d = {c.name: getattr(obj, c.name) for c in obj.__table__.columns}
+    for k, v in d.items():
+        if isinstance(v, datetime):
+            d[k] = v.isoformat()
+    return d
 # --- Pydantic model for the summary tool's arguments ---
 class SummaryArgs(BaseModel):
     event_id: int = Field(description="The ID of the QMS event to summarize.")
 
-# --- 'summary' tool with full implementation ---
+# --- 'summary' tool
 @tool("summary", args_schema=SummaryArgs)
 def summary(event_id: int) -> str:
     """Provides a concise summary of the QMS event with the given ID."""
@@ -58,9 +68,55 @@ def summary(event_id: int) -> str:
     summary_response = llm.invoke(summary_prompt)
     return summary_response.content
 
+class SearchEventsArgs(BaseModel):
+    """Arguments for searching QMS events with multiple optional criteria."""
+    status: Optional[str] = Field(default=None, description="Filter by status. E.g., 'REQUESTED', 'CLOSED'.")
+    severity: Optional[str] = Field(default=None, description="Filter by severity. E.g., 'CRITICAL', 'MAJOR'.")
+    event_type: Optional[str] = Field(default=None, description="Filter by event type. E.g., 'DEVIATION', 'CAPA'.")
+    created_by: Optional[str] = Field(default=None, description="Filter by the user who created the event.")
+    site : Optional[str] = Field(default=None, description="Filter by site.")
+
+@tool("search_events", args_schema=SearchEventsArgs)
+def search_events(status: str = None, severity: str = None, event_type: str = None, created_by: str = None, department: str = None,site:str = None) -> List[Dict[str, Any]]:
+    """Searches for QMS events based on a flexible set of criteria."""
+    db = next(database.get_db())
+    query = db.query(models.Event)
+
+    if status:
+        query = query.filter(models.Event.status == status)
+    if severity:
+        query = query.filter(models.Event.severity == severity)
+    if event_type:
+        query = query.filter(models.Event.event_type == event_type)
+    if created_by:
+        query = query.filter(models.Event.created_by == created_by)
+    if site:
+        query = query.filter(models.Event.site == site)
+    event_records = query.all()
+    
+    if not event_records:
+        return []
+    
+    return [model_to_dict(event) for event in event_records]
+
+class OpenEventArgs(BaseModel):
+    event_id: int = Field(description="The ID of the event to open for editing.")
+
+@tool("open_event_for_editing", args_schema=OpenEventArgs)
+def open_event_for_editing(event_id: int) -> Dict[str, Any]:
+    """Opens a specific QMS event to prepare it for editing by fetching its essential details."""
+    db = next(database.get_db())
+    event = db.query(models.Event).filter(models.Event.event_id == event_id).first()
+    if not event:
+        return {"error": f"Event with ID {event_id} not found."}
+    print(event.event_id,event.event_type.value)
+    return {
+        "event_id": event.event_id,
+        "event_type": event.event_type.value
+    }
 
 # --- Graph Setup ---
-tools = [summary]
+tools = [summary, search_events, open_event_for_editing]
 llm_with_tools = llm.bind_tools(tools)
 tool_node = ToolNode(tools)
 
@@ -68,13 +124,21 @@ class AgentState(TypedDict):
     messages: Annotated[List[BaseMessage], lambda x, y: x + y]
 
 def agent_node(state: AgentState):
-    """Calls the LLM to determine whether to summarize the event."""
-    system_prompt_content = f"""You are a specialized QMS assistant. Your primary job is to provide summaries of QMS events.
+    """Calls the LLM to determine which tool to use."""
+    
+    # ### UPDATED ### New system prompt with instructions for the new tool
+    system_prompt_content = f"""You are a specialized QMS assistant. You have tools to summarize an event, search for events, or open an event for editing.
 
-    You have one tool available:
-    1. `summary`: Use this tool if the user asks for a "summary", "overview", "recap", etc. You MUST extract the event ID from the user's message. For example, if the user says "summarize event 123", you must call the tool with event_id=123.
-    2. `suggest_next`: Use this tool if the user asks **"what should I do next?"** or "what's the next step?". To use this tool, you MUST look at the `current_event` data, find the `status` and `event_type`, and pass them as arguments.
-    """
+        You have the following tools available:
+        1. `summary`: Use this tool if the user asks for a "summary", "overview", or "details" of a SINGLE event. You MUST extract the event ID.
+        2. `search_events`: Use this tool if the user asks to "find", "show", or "list" events based on one or more criteria like status, severity, type, or creator.
+        3. `open_event_for_editing`: Use this tool if the user explicitly asks to "open" or "edit" an event. This tool fetches the necessary data to prepare an event for an editing interface.
+
+        Example 1: If the user says "summarize event 13", call the `summary` tool with `event_id=13`.
+        Example 2: If the user says "show me all critical deviations created by shebin", call `search_events` with `severity='CRITICAL'`, `event_type='DEVIATION'`, and `created_by='shebin'`.
+        Example 3: If the user says "I need to edit event 13" or "open event 13", call `open_event_for_editing` with `event_id=13`.
+        Example 4: If the user says "show all events in bengaluru", call `search_events` with `site`='bengaluru'`.
+        """
     
     system_prompt = SystemMessage(content=system_prompt_content)
     

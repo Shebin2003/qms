@@ -1,4 +1,3 @@
-// src/pages/ListEventsPage.jsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/common/header';
@@ -11,14 +10,12 @@ const ListEventsPage = () => {
     const [events, setEvents] = useState([]);
     const navigate = useNavigate();
 
-    // NEW: State to control the chat popup's visibility
     const [isChatOpen, setIsChatOpen] = useState(false);
     useEffect(() => {
         const loadEvents = async () => {
             const allEvents = await fetchEvents();
             const events = allEvents.events
             console.log(events); 
-            // Filter out closed events as requested
 
             const openEvents = events.filter(event => event.status !== 'Closed');
             setEvents(openEvents);
@@ -39,9 +36,8 @@ const ListEventsPage = () => {
         else{
             navigate(`/capa-details`,{state:data});
         }
-        //navigate(`/event/${eventId}`,{state:data});
     };
-
+    
     return (
         <div className="list-events-page-container">
             <Header
@@ -49,7 +45,6 @@ const ListEventsPage = () => {
                 buttonText="Log New Event"
                 onButtonClick={handleNewEventClick}
             >
-                {/* This button is now passed as a child and will be rendered */}
                 <button
                     className="secondary-button"
                     onClick={() => setIsChatOpen(true)}

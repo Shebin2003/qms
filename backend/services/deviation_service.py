@@ -6,7 +6,7 @@ class DeviationService:
     def create_event(self, event_data: dict):
         event = models.Event(**event_data)
         self.db.add(event)
-        self.db.flush()  # allows event.id to be generated
+        self.db.flush() 
         return event
         
     def create_deviation(self, deviation_data):
@@ -18,7 +18,6 @@ class DeviationService:
     
     def create_full_record(self, event_data: dict, deviation_data: dict):
         event = self.create_event(event_data)
-        # Inject generated event ID into deviation_data
         deviation_data['event_id'] = event.event_id
         deviation = self.create_deviation(deviation_data) 
         return {
